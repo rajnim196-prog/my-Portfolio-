@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rajni Mehra - Interactive Portfolio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1rem 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: #ffffff;
+            background: rgba(220, 20, 60, 0.8);
+            transform: translateY(-2px);
+        }
+
+        /* Slider Container */
+        .slider-container {
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+            margin-top: 0;
+        }
+
+        .slider {
+            display: flex;
+            height: 100%;
+            transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .slide {
+            min-width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Slide Backgrounds */
+        .slide:nth-child(1) {
+            background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
+        }
+        .slide:nth-child(2) {
+            background: linear-gradient(135deg, #ff1744 0%, #000000 100%);
+        }
+        .slide:nth-child(3) {
+            background: linear-gradient(135deg, #000000 0%, #dc143c 100%);
+        }
+        .slide:nth-child(4) {
+            background: linear-gradient(135deg, #8b0000 0%, #ff1744 100%);
+        }
+        .slide:nth-child(5) {
+            background: linear-gradient(135deg, #dc143c 0%, #000000 100%);
+        }
+
+        /* Slide Content */
+        .slide-content {
+            max-width: 1000px;
+            padding: 0 2rem;
+            text-align: center;
+            color: white;
+            transform: translateY(50px);
+            opacity: 0;
+            transition: all 0.8s ease;
+        }
+
+        .slide.active .slide-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .slide-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            animation: slideInFromTop 1s ease-out;
+        }
+
+        .slide.active .slide-title {
+            animation: slideInFromTop 1s ease-out;
+        }
+
+        .slide-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            animation: slideInFromBottom 1s ease-out 0.3s both;
+        }
+
+        .slide.active .slide-subtitle {
+            animation: slideInFromBottom 1s ease-out 0.3s both;
+        }
+
+        .slide-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            animation: fadeIn 1s ease-out 0.6s both;
+        }
+
+        .slide.active .slide-text {
+            animation: fadeIn 1s ease-out 0.6s both;
+        }
+
+        /* Animations */
+        @keyframes slideInFromTop {
+            0% {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideInFromBottom {
+            0% {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes scaleUp {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Skills Grid */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .skill-card {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 1.5rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            transform: scale(0.8);
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+
+        .slide.active .skill-card {
+            animation: scaleUp 0.6s ease-out forwards;
+        }
+
+        .slide.active .skill-card:nth-child(1) { animation-delay: 0.2s; }
+        .slide.active .skill-card:nth-child(2) { animation-delay: 0.4s; }
+        .slide.active .skill-card:nth-child(3) { animation-delay: 0.6s; }
+
+        .skill-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Experience Cards */
+        .experience-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .experience-card {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 2rem;
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transform: translateX(-100px);
+            opacity: 0;
+            transition: all 0.6s ease;
+        }
+
+        .slide.active .experience-card {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .slide.active .experience-card:nth-child(1) { animation-delay: 0.2s; }
+        .slide.active .experience-card:nth-child(2) { animation-delay: 0.4s; }
+
+        .experience-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .experience-card p {
+            margin-bottom: 0.5rem;
+            opacity: 0.9;
+        }
+
+        /* Project Cards */
+        .project-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .project-card {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2rem;
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            text-align: center;
+            transform: rotateY(90deg);
+            opacity: 0;
+            transition: all 0.8s ease;
+        }
+
+        .slide.active .project-card {
+            transform: rotateY(0deg);
+            opacity: 1;
+        }
+
+        .slide.active .project-card:nth-child(1) { animation-delay: 0.3s; }
+        .slide.active .project-card:nth-child(2) { animation-delay: 0.5s; }
+        .slide.active .project-card:nth-child(3) { animation-delay: 0.7s; }
+
+        .project-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Navigation Arrows */
+        .nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(220, 20, 60, 0.8);
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: white;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .nav-arrow:hover {
+            background: rgba(220, 20, 60, 1);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .nav-arrow.prev {
+            left: 2rem;
+        }
+
+        .nav-arrow.next {
+            right: 2rem;
+        }
+
+        /* Slide Indicators */
+        .slide-indicators {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+            z-index: 100;
+        }
+
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .indicator.active {
+            background: #dc143c;
+            transform: scale(1.3);
+        }
+
+        /* Contact Form */
+        .contact-form {
+            max-width: 500px;
+            margin: 2rem auto 0;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            transform: translateY(50px);
+            opacity: 0;
+        }
+
+        .slide.active .form-group {
+            animation: slideInFromBottom 0.6s ease-out forwards;
+        }
+
+        .slide.active .form-group:nth-child(1) { animation-delay: 0.2s; }
+        .slide.active .form-group:nth-child(2) { animation-delay: 0.4s; }
+        .slide.active .form-group:nth-child(3) { animation-delay: 0.6s; }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            backdrop-filter: blur(10px);
+            font-size: 1rem;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .submit-btn {
+            background: rgba(220, 20, 60, 0.8);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .submit-btn:hover {
+            background: rgba(220, 20, 60, 1);
+            transform: translateY(-2px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .nav-links a {
+                padding: 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .slide-title {
+                font-size: 2.5rem;
+            }
+
+            .slide-subtitle {
+                font-size: 1.2rem;
+            }
+
+            .nav-arrow {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+
+            .nav-arrow.prev {
+                left: 1rem;
+            }
+
+            .nav-arrow.next {
+                right: 1rem;
+            }
+
+            .skills-grid,
+            .experience-cards,
+            .project-showcase {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        /* Background Elements */
+        .bg-element {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .bg-element:nth-child(1) {
+            width: 100px;
+            height: 100px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .bg-element:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            top: 60%;
+            right: 15%;
+            animation-delay: 2s;
+        }
+
+        .bg-element:nth-child(3) {
+            width: 80px;
+            height: 80px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">Rajni Mehra</a>
+            <ul class="nav-links">
+                <li><a href="javascript:void(0)" onclick="goToSlide(0)" class="active">Home</a></li>
+                <li><a href="javascript:void(0)" onclick="goToSlide(1)">Skills</a></li>
+                <li><a href="javascript:void(0)" onclick="goToSlide(2)">Experience</a></li>
+                <li><a href="javascript:void(0)" onclick="goToSlide(3)">Projects</a></li>
+                <li><a href="javascript:void(0)" onclick="goToSlide(4)">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Slider Container -->
+    <div class="slider-container">
+        <div class="slider" id="slider">
+            <!-- Slide 1: Home -->
+            <div class="slide active">
+                <div class="bg-element"></div>
+                <div class="bg-element"></div>
+                <div class="bg-element"></div>
+                <div class="slide-content">
+                    <h1 class="slide-title">Creative Content Creator</h1>
+                    <p class="slide-subtitle">Video Editor • Visual Storyteller • On-Camera Talent</p>
+                    <p class="slide-text">
+                        Passionate and self-driven content creator with a strong flair for video editing, visual storytelling, and on-camera presence. I bring fresh, engaging ideas and creative execution to every project, creating relatable and aesthetic content that truly connects with audiences.
+                    </p>
+                    <div class="skills-grid">
+                        <div class="skill-card">
+                            <h3>🎥 Video Editing</h3>
+                            <p>CapCut, VN, InShot</p>
+                        </div>
+                        <div class="skill-card">
+                            <h3>🎨 Creative Design</h3>
+                            <p>Canva, Visual Storytelling</p>
+                        </div>
+                        <div class="skill-card">
+                            <h3>📱 Social Media</h3>
+                            <p>Content Strategy, Engagement</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 2: Skills -->
+            <div class="slide">
+                <div class="bg-element"></div>
+                <div class="bg-element"></div>
+                <div class="bg-element"></div>
+                <div class="slide-content">
+                    <h1 class="slide-title">Skills & Expertise</h1>
+                    <p class="slide-subtitle">Crafting engaging content across multiple platforms</p>
+                    <div class="skills-grid">
+                        <div class="skill-card">
+                            <h3>🎬 Video Editing Tools</h3>
+                            <p>CapCut • VN • InShot • Canva</p>
+                        </div>
+                        <div class="skill-card">
+                            <h3>📝 Content Creation</h3>
+                            <p>Vlogging • Voiceovers • Short-form videos</p>
+                        </div>
+                        <div class="skill-card">
+                            <h3>🎨 Creative Skills</h3>
+                            <p>Visual storytelling • Transition editing • Text overlays • Music syncing</p>
+                        </div>
+                        <div class="skill-card">
+                            <h3>🌐 Languages</h3>
+                            <p>Hindi • English • Kumaoni • Korean</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3: Experience -->
+            <div class="slide">
+                <div class="bg-element"></div>
+                <div class="bg-element"></div>
+                <div class="bg-element"></div>
+                <div class="slide-content">
+                    <h1 class="slide-title">Experience</h1>
+                    <p class="slide-subtitle">Building brands through creative content</p>
+                    <div class="experience-cards">
+                        <div class="experience-card">
+                            <h3>Social Media Manager</h3>
+                            <p><strong>Navneesh Dental Clinic</strong></p>
+                            <p>Managing social media with informative, clean, and engaging edits that align with the clinic's professional brand.</p>
+                        </div>
+                        <div class="experience-card">
+                            <h3>Founder & Creator</h3>
+                            <p><strong>Hilly Snaps - Instagram Page</strong></p>
+                            <p>Developed aesthetic posts with creative reels, compelling captions, and storytelling elements.</p>
+                        </div>
+                        <div class="experience-card">
+                            <h3>YouTube Content Creator</h3>
+                            <p><strong>Editor, Voiceover Artist, Presenter</strong></p>
+                            <p>Creating vlog-style videos covering travel, daily life, and self-reflection themes with professional voiceovers.</p>
+                        </div>
+                        <div class="experience-card">
+                            <h3>Cultural Performer</h3>
+                            <p><strong>Stage Performances & Competitions</strong></p>
+                            <p>Participated in dance competitions at Delhi University and performed at Bharat Mandapam.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 4: Projects -->
+            <div class="slide">
+                <div class="bg-element"></div>
+                <div class="bg-element"></div>
+                <div class="bg-element"></div>
+                <div class="slide-content">
+                    <h1 class="slide-title">Featured Projects</h1>
+                    <p class="slide-subtitle">Creative work that makes an impact</p>
+                    <div class="project-showcase">
+                        <div class="project-card">
+                            <div class="project-icon">🏥</div>
+                            <h3>Healthcare Content</h3>
+                            <p>Professional social media management for dental clinic with engaging, informative content.</p>
+                        </div>
+                        <div class="project-card">
+                            <div class="project-icon">🌄</div>
+                            <h3>Lifestyle Vlogs</h3>
+                            <p>Personal brand content featuring travel, daily life, and self-reflection themes.</p>
+                        </div>
+                        <div class="project-card">
+                            <div class="project-icon">💃</div>
+                            <h3>Cultural Performances</h3>
+                            <p>Award-winning dance performances showcasing cultural heritage and artistic expression.</p>
+                        </div>
+                    </div>
+                    <p class="slide-text" style="margin-top: 2rem;">
+                        Each project represents a unique challenge in visual storytelling, from professional healthcare communications to personal lifestyle content. I bring the same attention to detail and creative vision to every piece of content I create.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Slide 5: Contact -->
+            <div class="slide">
+                <div class="bg-element"></div>
+                <div class="bg-element"></div>
+                <div class="bg-element"></div>
+                <div class="slide-content">
+                    <h1 class="slide-title">Let's Create Together</h1>
+                    <p class="slide-subtitle">Ready to bring your vision to life</p>
+                    <p class="slide-text">
+                        Whether you need engaging social media content, professional video editing, or creative storytelling, I'm here to help bring your ideas to life. Let's collaborate on something amazing!
+                    </p>
+                    <div class="contact-form">
+                        <div class="form-group">
+                            <input type="text" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" placeholder="Your Email" required>
+                        </div>
+                        <div class="form-group">
+                            <textarea rows="5" placeholder="Tell me about your project..." required></textarea>
+                        </div>
+                        <button type="submit" class="submit-btn">Send Message</button>
+                    </div>
+                    <div style="margin-top: 2rem; font-size: 1.1rem;">
+                        <p>📱 +91 7303343622</p>
+                        <p>✉️ rajnim196@gmail.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Arrows -->
+        <button class="nav-arrow prev" onclick="previousSlide()">‹</button>
+        <button class="nav-arrow next" onclick="nextSlide()">›</button>
+
+        <!-- Slide Indicators -->
+        <div class="slide-indicators">
+            <div class="indicator active" onclick="goToSlide(0)"></div>
+            <div class="indicator" onclick="goToSlide(1)"></div>
+            <div class="indicator" onclick="goToSlide(2)"></div>
+            <div class="indicator" onclick="goToSlide(3)"></div>
+            <div class="indicator" onclick="goToSlide(4)"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const totalSlides = 5;
+        let isAnimating = false;
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        function updateSlider() {
+            if (isAnimating) return;
+            
+            isAnimating = true;
+            const slider = document.getElementById('slider');
+            const slides = document.querySelectorAll('.slide');
+            const indicators = document.querySelectorAll('.indicator');
+            const navLinks = document.querySelectorAll('.nav-links a');
+
+            // Update slider position
+            slider.style.transform = `translateX(-${currentSlide * 100}vw)`;
+
+            // Update active states
+            slides.forEach((slide, index) => {
+                slide.classList.toggle('active', index === currentSlide);
+            });
+
+            indicators.forEach((indicator, index) => {
+                indicator.classList.toggle('active', index === currentSlide);
+            });
+
+            navLinks.forEach((link, index) => {
+                link.classList.toggle('active', index === currentSlide);
+            });
+
+            // Reset animation flag after transition
+            setTimeout(() => {
+                isAnimating = false;
+            }, 800);
+        }
+
+        function goToSlide(slideIndex) {
+            if (slideIndex >= 0 && slideIndex < totalSlides) {
+                currentSlide = slideIndex;
+                updateSlider();
+            }
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateSlider();
+        }
+
+        function previousSlide() {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            updateSlider();
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                previousSlide();
+            }
+        });
+
+        // Touch/Swipe support
+        document.addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', function(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const swipeDistance = touchEndX - touchStartX;
+
+            if (Math.abs(swipeDistance) > swipeThreshold) {
+                if (swipeDistance > 0) {
+                    previousSlide();
+                } else {
+                    nextSlide();
+                }
+            }
+        }
+
+        // Auto-scroll functionality (optional - uncomment to enable)
+        // setInterval(() => {
+        //     if (!isAnimating) {
+        //         nextSlide();
+        //     }
+        // }, 10000);
+
+        // Form submission
+        document.querySelector('.contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = document.querySelector('.submit-btn');
+            const originalText = btn.textContent;
+            
+            btn.textContent = 'Sending...';
+            btn.style.background = 'rgba(220, 20, 60, 1)';
+            
+            setTimeout(() => {
+                btn.textContent = 'Message Sent!';
+                btn.style.background = 'rgba(34, 139, 34, 0.8)';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = 'rgba(220, 20, 60, 0.8)';
+                    this.reset();
+                }, 2000);
+            }, 1500);
+        });
+
+        // Initialize
+        updateSlider();
+
+        // Smooth navbar background on scroll
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.background = 'rgba(0, 0, 0, 0.98)';
+            } else {
+                navbar.style.background = 'rgba(0, 0, 0, 0.95)';
+            }
+        });
+    </script>
+</body>
+</html>
